@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL MAP 2.0//EN" 
+	"http://www.ibatis.com/dtd/sql-map-2.dtd">
+<sqlMap namespace="allcustomers">
+
+    <typeAlias alias="customers" type="nio.springserver.spring.model.Customers"/> 
+    <cacheModel id="customersCache" type="LRU" readOnly="true">
+        <flushInterval hours="24"/>
+        <flushOnExecute statement="allcustomers.salaryCustomers"/>
+        <property name="cache-size" value="1000"/>
+    </cacheModel>
+
+
+    <resultMap id="customersResult" class="customers">
+        <result property="id" column="ID"/>     
+        <result property="name"  column="NAME"/>          
+        <result property="address"  column="ADDRESS"/>       
+        <result property="age"  column="AGE"/>	   
+        <result property="salary"   column="SALARY"/>	   
+    </resultMap>
+
+    <select id="getAllCustomers" resultMap="customersResult" 
+	    cacheModel="customersCache">
+        SELECT 
+               ID,				  
+               NAME,					  
+               AGE,		
+               ADDRESS,
+               SALARY					  
+        FROM 
+              CUSTOMERS
+    </select>
+
+    <select id="getCustomer" parameterClass="long" resultMap="customersResult" 
+	    cacheModel="customersCache">
+        SELECT 
+               ID,				  
+               NAME,					  
+               AGE,		
+               ADDRESS,
+               SALARY					  
+        FROM 
+              CUSTOMERS 
+        WHERE 
+              ID = #id#
+    </select>
+
+    <update id="salaryCustomers" parameterClass="nio.springserver.spring.model.Customers">
+        UPDATE 
+              CUSTOMERS 					 
+        SET 						 
+              SALARY = #salary#
+        WHERE 					
+              ID = #id#			
+    </update>						 
+
+</sqlMap>

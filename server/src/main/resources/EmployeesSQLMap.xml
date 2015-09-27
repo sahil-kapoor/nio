@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL MAP 2.0//EN" 
+	"http://www.ibatis.com/dtd/sql-map-2.dtd">
+<sqlMap namespace="allemployees">
+
+    <typeAlias alias="employees" type="nio.springserver.spring.model.Employees"/> 
+    <cacheModel id="employeesCache" type="LRU" readOnly="true">
+        <flushInterval hours="24"/>
+        <flushOnExecute statement="allemployees.updateEmployees"/>
+        <property name="cache-size" value="1000"/>
+    </cacheModel>
+
+
+    <resultMap id="employeesResult" class="employees">
+        <result property="id" column="EMPLOYEE_ID"/>     
+        <result property="firstName"  column="FIRST_NAME"/>          
+        <result property="lastName"  column="LAST_NAME"/>       
+        <result property="email"  column="EMAIL"/>	   
+        <result property="phoneNumber"  column="PHONE_NUMBER"/>	   
+        <result property="hireDate"  column="HIRE_DATE"/>	   
+        <result property="jobId"  column="JOB_ID"/>	   
+        <result property="salary"   column="SALARY" />	   
+        <result property="comission"  column="COMMISSION_PCT" nullValue="-9999"/>	   
+        <result property="managerId"  column="MANAGER_ID" nullValue="-9999"/>	   
+        <result property="depId"  column="DEPARTMENT_ID" nullValue="-9999"/>	   
+    </resultMap>
+
+<!-- 
+	private long id;
+	private String firstName;
+	private String lastName;
+	private String email;
+	private String phoneNumber;
+	private Date hireDate;
+	private String jobId;
+	private int salary;
+	private int comission;
+	private long managerId;
+	private long depId;
+
+ -->
+    <select id="getAllEmployees" resultMap="employeesResult" 
+	    cacheModel="employeesCache">
+	    SELECT 
+	    	EMPLOYEE_ID, 
+			FIRST_NAME, 
+			LAST_NAME, 
+			EMAIL, 
+			PHONE_NUMBER, 
+			HIRE_DATE, 
+			JOB_ID, 
+			SALARY, 
+			COMMISSION_PCT, 
+			MANAGER_ID, 
+			DEPARTMENT_ID
+        FROM 
+              EMPLOYEES
+    </select>
+
+    <select id="getEmployee" parameterClass="long" resultMap="employeesResult" 
+	    cacheModel="employeesCache">
+	    SELECT 
+	    	EMPLOYEE_ID, 
+			FIRST_NAME, 
+			LAST_NAME, 
+			EMAIL, 
+			PHONE_NUMBER, 
+			HIRE_DATE, 
+			JOB_ID, 
+			SALARY, 
+			COMMISSION_PCT, 
+			MANAGER_ID, 
+			DEPARTMENT_ID
+        FROM 
+              EMPLOYEES
+        WHERE 
+              EMPLOYEE_ID = #id#
+    </select>
+
+    <update id="updateEmployees" parameterClass="nio.springserver.spring.model.Employees">
+        UPDATE 
+              EMPLOYEES 					 
+        SET 						 
+              SALARY = #salary#
+        WHERE 					
+              EMPLOYEE_ID = #id#			
+    </update>						 
+
+</sqlMap>
