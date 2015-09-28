@@ -14,8 +14,8 @@
     <resultMap id="customersResult" class="customers">
         <result property="id" column="ID"/>     
         <result property="name"  column="NAME"/>          
-        <result property="address"  column="ADDRESS"/>       
         <result property="age"  column="AGE"/>	   
+        <result property="address"  column="ADDRESS"/>       
         <result property="salary"   column="SALARY"/>	   
     </resultMap>
 
@@ -52,6 +52,15 @@
               SALARY = #salary#
         WHERE 					
               ID = #id#			
-    </update>						 
+    </update>				
+    <insert id="insertBatchData" parameterClass="nio.springserver.spring.model.Customers">
+    	INSERT INTO CUSTOMERS(
+    		   ID,				  
+               NAME,					  
+               AGE,		
+               ADDRESS,
+               SALARY)
+			VALUES(#id#, #name#, #age#, #address#, #salary#)
+    </insert>		 
 
 </sqlMap>
