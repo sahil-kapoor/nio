@@ -4,7 +4,6 @@ import org.apache.commons.cli2.CommandLine;
 import org.apache.commons.cli2.Group;
 import org.apache.commons.cli2.Option;
 import org.apache.commons.cli2.OptionException;
-import org.apache.commons.cli2.builder.ArgumentBuilder;
 import org.apache.commons.cli2.builder.DefaultOptionBuilder;
 import org.apache.commons.cli2.builder.GroupBuilder;
 import org.apache.commons.cli2.commandline.Parser;
@@ -13,103 +12,151 @@ import org.apache.commons.cli2.util.HelpFormatter;
 import io.netty.handler.logging.LogLevel;
 
 public class Config {
-	private int port = 8088;
-	private String fqdn = "localhost";
-	private String pathToCfg = ".";
-	private String logFile = ".";
-	private LogLevel logLevel = LogLevel.INFO;
-	private Group options;
+    private static Config instance = null;
+    private static int port = 8088;
+    private static int poolSize = 10;
+    private static DatabaseType dbType = DatabaseType.ORACLE;
+    private static String fqdn = "localhost";
+    private static String pathToCfg = "src/main/resources/";
+    private static String logFile = ".";
+    private static LogLevel logLevel = LogLevel.INFO;
+    private static Group options;
 
-	public void parseCLI(String[] args) {
-		final DefaultOptionBuilder obuilder = new DefaultOptionBuilder();
-		final ArgumentBuilder abuilder = new ArgumentBuilder();
-		final GroupBuilder gbuilder = new GroupBuilder();
+    public static Config getInstance() {
+	if (instance == null)
+	    instance = new Config();
+	return instance;
+    }
 
-		Option help = obuilder.withShortName("help").withShortName("h")
-				.withDescription("print this message").create();
-		Option logfile = obuilder.withShortName("logfile").withShortName("l")
-				.withDescription("log file absolute location").create();
-		Option version = obuilder.withShortName("version").withShortName("v")
-				.withDescription("print the version information and exit")
-				.create();
-		Option rootCfg = obuilder.withShortName("config").withShortName("c")
-				.withDescription("location of configuration files")
-				.create();
+    public static boolean parseCLI(String[] args) {
+	getInstance();
+	final DefaultOptionBuilder obuilder = new DefaultOptionBuilder();
+	// final ArgumentBuilder abuilder = new ArgumentBuilder();
+	final GroupBuilder gbuilder = new GroupBuilder();
 
-		options = gbuilder.withName("options").withOption(help)
-				.withOption(logfile).withOption(version).withOption(rootCfg)
-				.create();
+	Option help = obuilder.withShortName("help").withShortName("?").withDescription("print this message").create();
+	Option version = obuilder.withShortName("version").withShortName("v")
+		.withDescription("print the version information and exit").create();
 
-		Parser parser = new Parser();
-		parser.setGroup(options);
-		// TODO continue here
-		try {
-			CommandLine cl = parser.parse(args);
-			if (cl.hasOption(help)) {
-				helpPrint();
-				return;
-			}
-			if (cl.hasOption(version)) {
-				displayVersion();
-				return;
-			}
-			if (cl.hasOption(logfile)) {
-				setLogFile((String) cl.getValue(logfile));
-			}
-			if (cl.hasOption(rootCfg)) {
-				setPathToCfg((String) cl.getValue(rootCfg));
-			}
+	Option logfile = obuilder.withShortName("logfile").withShortName("l")
+		.withDescription("log file absolute location").create();
+	Option rootCfg = obuilder.withShortName("config").withShortName("c")
+		.withDescription("location of configuration files").create();
+	Option port = obuilder.withShortName("port").withShortName("p")
+		.withDescription("port to listen (default " + getPort() + ")").create();
+	Option host = obuilder.withShortName("host").withShortName("h")
+		.withDescription("host to works (default " + getFqdn() + ")").create();
+	Option pool = obuilder.withShortName("poolsize").withShortName("n")
+		.withDescription("database pool size (default " + getPoolSize() + ")").create();
+	Option db = obuilder.withShortName("database").withShortName("d")
+		.withDescription("database type [ORACLE|POSTGRESQL|MONGODB](default " + getDbType() + ")").create();
 
-		} catch (OptionException e) {
-			e.printStackTrace();
-		}
+	options = gbuilder.withName("options").withOption(help).withOption(logfile).withOption(version)
+		.withOption(rootCfg).withOption(port).withOption(host).withOption(pool).withOption(db).create();
 
+	Parser parser = new Parser();
+	parser.setGroup(options);
+	// TODO continue here
+	try {
+	    CommandLine cl = parser.parse(args);
+	    if (cl.hasOption(help)) {
+		helpPrint();
+		return false;
+	    }
+	    if (cl.hasOption(version)) {
+		displayVersion();
+		return false;
+	    }
+	    if (cl.hasOption(logfile)) {
+		setLogFile((String) cl.getValue(logfile));
+	    }
+	    if (cl.hasOption(rootCfg)) {
+		setPathToCfg((String) cl.getValue(rootCfg));
+	    }
+	    if (cl.hasOption(port)) {
+		setPort((Integer) cl.getValue(port));
+	    }
+	    if (cl.hasOption(host)) {
+		setFqdn((String) cl.getValue(host));
+	    }
+	    if (cl.hasOption(pool)) {
+		setPoolSize((Integer) cl.getValue(pool));
+	    }
+	    if (cl.hasOption(db)) {
+		setDbType(DatabaseType.lookup((String) cl.getValue(db)));
+	    }
+	    return true;
+	} catch (OptionException e) {
+	    e.printStackTrace();
 	}
+	return false;
+    }
 
-	private void displayVersion() {
-		System.out.println("version 0.0.1");
-	}
+    private static void displayVersion() {
+	System.out.println("version 0.0.1");
+    }
 
-	private void helpPrint() {
-		HelpFormatter hf = new HelpFormatter();
-		hf.setShellCommand("Launcher");
-		hf.setGroup(options);
+    private static void helpPrint() {
+	HelpFormatter hf = new HelpFormatter();
+	hf.setShellCommand("Launcher");
+	hf.setGroup(options);
 
-		hf.print();
-	}
+	hf.print();
+    }
 
-	public int getPort() {
-		return port;
-	}
-	public void setPort(int port) {
-		this.port = port;
-	}
-	public String getFqdn() {
-		return fqdn;
-	}
-	public void setFqdn(String fqdn) {
-		this.fqdn = fqdn;
-	}
-	public LogLevel getLogLevel() {
-		return logLevel;
-	}
-	public void setLogLevel(LogLevel logLevel) {
-		this.logLevel = logLevel;
-	}
+    public static int getPort() {
+	return port;
+    }
 
-	public String getPathToCfg() {
-		return pathToCfg;
-	}
+    public static void setPort(int p) {
+	port = p;
+    }
 
-	public void setPathToCfg(String pathToCfg) {
-		this.pathToCfg = pathToCfg;
-	}
+    public static String getFqdn() {
+	return fqdn;
+    }
 
-	public String getLogFile() {
-		return logFile;
-	}
+    public static void setFqdn(String f) {
+	fqdn = f;
+    }
 
-	public void setLogFile(String logFile) {
-		this.logFile = logFile;
-	}
+    public static LogLevel getLogLevel() {
+	return logLevel;
+    }
+
+    public static void setLogLevel(LogLevel l) {
+	logLevel = l;
+    }
+
+    public static String getPathToCfg() {
+	return pathToCfg;
+    }
+
+    public static void setPathToCfg(String path) {
+	pathToCfg = path;
+    }
+
+    public static String getLogFile() {
+	return logFile;
+    }
+
+    public static void setLogFile(String log) {
+	logFile = log;
+    }
+
+    public static int getPoolSize() {
+	return poolSize;
+    }
+
+    public static void setPoolSize(int poolSize) {
+	Config.poolSize = poolSize;
+    }
+
+    public static DatabaseType getDbType() {
+	return dbType;
+    }
+
+    public static void setDbType(DatabaseType dbType) {
+	Config.dbType = dbType;
+    }
 }
