@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="my.spring.server.spring.persistence.CustomerMapper">
+
+	<!--cache eviction="LRU" flushInterval="60000" size="512" readOnly="true" /-->
+	<cache/>
+    <resultMap id="customersResult" type="my.spring.server.spring.model.Customer">
+        <result property="id" column="ID"/>     
+        <result property="name"  column="NAME"/>          
+        <result property="age"  column="AGE"/>	   
+        <result property="address"  column="ADDRESS"/>       
+        <result property="salary"   column="SALARY"/>	   
+    </resultMap>
+
+
+	<select id="getCustomer" parameterType="long"
+		resultMap="customersResult">
+		SELECT * FROM CUSTOMERS WHERE ID = #{customerId}
+	</select>
+
+	<select id="getAllCustomers" resultMap="customersResult">
+		SELECT * FROM CUSTOMERS
+	</select>
+
+	<select id="addCustomer" parameterType="my.spring.server.spring.model.Customer">
+    	INSERT INTO CUSTOMERS(
+    		   ID,				  
+               NAME,					  
+               AGE,		
+               ADDRESS,
+               SALARY)
+			VALUES(#{id}, #{name}, #{age}, #{address}, #{salary})
+	</select>
+
+</mapper>
