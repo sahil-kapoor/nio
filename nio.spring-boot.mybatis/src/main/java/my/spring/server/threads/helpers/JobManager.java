@@ -1398,7 +1398,6 @@ public class JobManager implements IJobManager {
     /**
      * Implementation of {@link Job#yieldRule(IProgressMonitor)}
      */
-    @SuppressWarnings("unchecked")
     public Job yieldRule(InternalJob job, IProgressMonitor monitor) {
 	Thread currentThread = Thread.currentThread();
 	Assert.isLegal(job.getState() == Job.RUNNING,

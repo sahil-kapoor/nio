@@ -64,6 +64,7 @@ public class LockManager {
      * locks, it can cause deadlock, and some locks it owns can be suspended
      * again)
      */
+    @SuppressWarnings("rawtypes")
     private HashMap suspendedLocks = new HashMap();
 
     public LockManager() {
@@ -137,6 +138,7 @@ public class LockManager {
      * This thread has just been refused a lock. Update graph and check for
      * deadlock.
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public void addLockWaitThread(Thread thread, ISchedulingRule lock) {
 	DeadlockDetector tempLocks = locks;
 	if (tempLocks == null)
@@ -289,6 +291,7 @@ public class LockManager {
      * Resumes all the locks that were suspended while this thread was waiting
      * to acquire another lock.
      */
+    @SuppressWarnings("rawtypes")
     public void resumeSuspendedLocks(Thread owner) {
 	LockState[] toResume;
 	synchronized (suspendedLocks) {

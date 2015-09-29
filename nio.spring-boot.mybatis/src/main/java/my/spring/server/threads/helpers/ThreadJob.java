@@ -89,6 +89,7 @@ public class ThreadJob extends Job {
      * @param rule
      *            The rule that was popped @GuardedBy("JobManager.implicitJobs")
      */
+    @SuppressWarnings("unused")
     private void illegalPop(ISchedulingRule rule) {
 	StringBuffer buf = new StringBuffer("Attempted to endRule: ");
 	buf.append(rule);
@@ -115,6 +116,7 @@ public class ThreadJob extends Job {
      * Client has attempted to begin a rule that is not contained within the
      * outer rule.
      */
+    @SuppressWarnings("unused")
     private void illegalPush(ISchedulingRule pushRule, ISchedulingRule baseRule) {
 	StringBuffer buf = new StringBuffer("Attempted to beginRule: ");
 	buf.append(pushRule);
@@ -133,6 +135,7 @@ public class ThreadJob extends Job {
      * Returns true if the monitor is canceled, and false otherwise. Protects
      * the caller from exception in the monitor implementation.
      */
+    @SuppressWarnings("unused")
     static private boolean isCanceled(IProgressMonitor monitor) {
 	try {
 	    return monitor.isCanceled();

@@ -146,8 +146,8 @@ public final class JobQueue {
 	return dummy.previous() == dummy ? null : dummy.previous();
     }
 
-    public Iterator iterator() {
-	return new Iterator() {
+    public Iterator<InternalJob> iterator() {
+	return new Iterator<InternalJob>() {
 	    InternalJob pointer = dummy;
 
 	    @Override
@@ -160,7 +160,7 @@ public final class JobQueue {
 	    }
 
 	    @Override
-	    public Object next() {
+	    public InternalJob next() {
 		return pointer;
 	    }
 
