@@ -127,8 +127,7 @@ public class WorkerPool {
 	    worker.setDaemon(isDaemon);
 	    add(worker);
 	    if (JobManager.DEBUG)
-		JobManager.debug("worker added to pool: " //$NON-NLS-1$
-			+ worker);
+		JobManager.debug("worker added to pool: " + worker);
 	    worker.start();
 	    return;
 	}

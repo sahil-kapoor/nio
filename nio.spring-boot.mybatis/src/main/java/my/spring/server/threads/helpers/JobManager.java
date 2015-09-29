@@ -1,16 +1,14 @@
 package my.spring.server.threads.helpers;
 
-//don't use ICU because this is used for debugging only (see bug 135785)
-import java.text.DateFormat;
-import java.text.FieldPosition;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import my.spring.server.exceptions.OperationCanceledException;
 import my.spring.server.threads.InternalJob;
@@ -40,6 +38,7 @@ import my.spring.server.threads.workers.WorkerPool;
 import my.spring.server.utils.Assert;
 
 public class JobManager implements IJobManager {
+    private static Logger log = LoggerFactory.getLogger(JobManager.class);
 
     /**
      * The unique identifier constant of this plug-in.
@@ -78,7 +77,7 @@ public class JobManager implements IJobManager {
     public static boolean DEBUG_LOCKS = DEBUG;
     public static boolean DEBUG_TIMING = DEBUG;
     public static boolean DEBUG_SHUTDOWN = DEBUG;
-    private static DateFormat DEBUG_FORMAT;
+    // private static DateFormat DEBUG_FORMAT;
 
     /**
      * The singleton job manager instance. It must be a singleton because all
@@ -185,13 +184,13 @@ public class JobManager implements IJobManager {
 	StringBuffer msgBuf = new StringBuffer(msg.length() + 40);
 	if (DEBUG_TIMING) {
 	    // lazy initialize to avoid overhead when not debugging
-	    if (DEBUG_FORMAT == null)
-		DEBUG_FORMAT = new SimpleDateFormat("HH:mm:ss.SSS");
-	    DEBUG_FORMAT.format(new Date(), msgBuf, new FieldPosition(0));
-	    msgBuf.append('-');
+	    // if (DEBUG_FORMAT == null)
+	    // DEBUG_FORMAT = new SimpleDateFormat("HH:mm:ss.SSS");
+	    // DEBUG_FORMAT.format(new Date(), msgBuf, new FieldPosition(0));
+	    // msgBuf.append('-');
 	}
 	msgBuf.append('[').append(Thread.currentThread()).append(']').append(msg);
-	System.out.println(msgBuf.toString());
+	log.info(msgBuf.toString());
     }
 
     /**

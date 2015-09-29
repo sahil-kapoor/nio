@@ -9,10 +9,14 @@ import org.apache.commons.cli2.builder.DefaultOptionBuilder;
 import org.apache.commons.cli2.builder.GroupBuilder;
 import org.apache.commons.cli2.commandline.Parser;
 import org.apache.commons.cli2.util.HelpFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.netty.handler.logging.LogLevel;
 
 public class Config {
+    private static Logger log = LoggerFactory.getLogger(Config.class);
+
     private static Config instance = null;
     private static int port = 8088;
     private static int poolSize = 10;
@@ -107,7 +111,7 @@ public class Config {
 		setDbType(DatabaseType.lookup((String) cl.getValue(db)));
 	    }
 	    if (debug) {
-		System.out.println(instance.toString());
+		log.info(instance.toString());
 	    }
 	    return true;
 	} catch (OptionException e) {
