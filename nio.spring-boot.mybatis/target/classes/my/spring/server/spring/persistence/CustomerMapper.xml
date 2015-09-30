@@ -11,8 +11,42 @@
         <result property="name"  column="NAME"/>          
         <result property="age"  column="AGE"/>	   
         <result property="address"  column="ADDRESS"/>       
-        <result property="salary"   column="SALARY"/>	   
+        <result property="salary"   column="SALARY" />	   
     </resultMap>
+	<parameterMap  id="customersParams" type="my.spring.server.spring.model.Customer">
+        <parameter property="id" jdbcType="INTEGER" mode="IN"/>     
+        <parameter property="name"  jdbcType="VARCHAR" mode="IN"/>          
+        <parameter property="age"  jdbcType="INTEGER" mode="IN"/>	   
+        <parameter property="address"  jdbcType="VARCHAR" mode="IN"/>       
+        <parameter property="salary"   jdbcType="REAL" mode="IN"/>	   
+  	</parameterMap>
+	<parameterMap  id="customersParamsInOut" type="map">
+        <parameter property="id" jdbcType="INTEGER" mode="INOUT"/>     
+        <parameter property="name"  jdbcType="VARCHAR" mode="OUT"/>          
+        <parameter property="age"  jdbcType="INTEGER" mode="OUT"/>	   
+        <parameter property="address"  jdbcType="VARCHAR" mode="OUT"/>       
+        <parameter property="salary"   jdbcType="REAL" mode="OUT"/>	   
+  	</parameterMap>
+  	
+  	<select id="addOverProc" parameterMap="customersParams" statementType="CALLABLE">
+    	{ CALL ADD_CUSTOMER(
+	    	#{id, mode=IN, jdbcType=INTEGER},
+	    	#{name, mode=IN, jdbcType=VARCHAR},
+	    	#{age, mode=IN, jdbcType=INTEGER},
+	    	#{address, mode=IN, jdbcType=VARCHAR},
+	    	#{salary, mode=IN, jdbcType=REAL}
+	    	)}
+	</select>
+  	<select id="getOverProc" parameterMap="customersParamsInOut" statementType="CALLABLE"  useCache="false">
+    	{ CALL GET_CUSTOMER(
+	    	#{id, mode=INOUT, jdbcType=INTEGER},
+	    	#{name, mode=OUT, jdbcType=VARCHAR},
+	    	#{age, mode=OUT, jdbcType=INTEGER},
+	    	#{address, mode=OUT, jdbcType=VARCHAR},
+	    	#{salary, mode=OUT, jdbcType=REAL}
+	    	)}
+	</select>
+  	
 
 
 	<select id="getCustomer" parameterType="long"

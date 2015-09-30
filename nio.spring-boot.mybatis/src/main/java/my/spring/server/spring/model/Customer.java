@@ -9,12 +9,16 @@ public class Customer implements Serializable {
     private String name;
     private int age;
     private String address;
-    private int salary;
+    private float salary;
 
     public Customer() {
     }
 
-    public Customer(long id, String name, int age, String address, int salary) {
+    public Customer(long id) {
+	setId(id);
+    }
+
+    public Customer(long id, String name, int age, String address, float salary) {
 	setId(id);
 	setName(name);
 	setAge(age);
@@ -54,11 +58,11 @@ public class Customer implements Serializable {
 	this.address = address;
     }
 
-    public int getSalary() {
+    public float getSalary() {
 	return salary;
     }
 
-    public void setSalary(int salary) {
+    public void setSalary(float salary) {
 	this.salary = salary;
     }
 

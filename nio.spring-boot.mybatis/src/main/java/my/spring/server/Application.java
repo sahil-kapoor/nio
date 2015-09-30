@@ -13,6 +13,7 @@ import my.spring.server.listener.Listener;
 import my.spring.server.spring.model.Customer;
 import my.spring.server.spring.service.CustomerService;
 
+// -Duser.language=en -Duser.region=us
 public class Application {
     private static Logger log = LoggerFactory.getLogger(Application.class);
 
@@ -21,7 +22,6 @@ public class Application {
 	if (Config.parseCLI(args, true)) {
 	    Listener lnr = new Listener("listener", Config.getInstance());
 	    lnr.schedule();
-
 	    ApplicationContext ctx = new ClassPathXmlApplicationContext("application-config.xml");
 	    CustomerService customerService = ctx.getBean(CustomerService.class);
 	    log.info("Adding Customers");
@@ -30,7 +30,8 @@ public class Application {
 	    for (int i = ++userId, j = 1, a = 25, k = 1, s = 1000; j < 10;) {
 		list.add(new Customer(i++, "dude" + (j++) + "@dude.com", ++a, "street-" + (k++), s *= 1.5));
 	    }
-	    customerService.addCustomers(list);
+	    // customerService.addCustomers(list); // batch insert
+	    customerService.addOverProc(list); // procedure call insert
 	    log.info("Getting All Customers");
 	    List<Customer> users = customerService.getAllCustomers();
 	    try {
@@ -38,6 +39,8 @@ public class Application {
 	    } catch (NullPointerException npe) {
 		log.error(npe.getMessage(), npe);
 	    }
+	    // procedure call inout select
+	    log.info("Got User over proc with id 2: " + customerService.getOverProc(2));
 	}
     }
 
