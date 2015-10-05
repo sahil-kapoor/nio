@@ -19,13 +19,11 @@ public class Listener extends Job {
     private static Logger log = LoggerFactory.getLogger(Listener.class);
     private static IStatus OK = new Status(Status.OK, "empty", "Ok");
     private static IStatus CANCEL = new Status(Status.CANCEL, "empty", "Cancel");
-    private Config configuration = null;
 
-    public Listener(String name, Config config) {
+    public Listener(String name) {
 	super(name);
 	OK.setProcessName(name);
 	CANCEL.setProcessName(name);
-	setConfiguration(config);
     }
 
     @Override
@@ -42,12 +40,10 @@ public class Listener extends Job {
 	EventLoopGroup workerGroup = new NioEventLoopGroup();
 	try {
 	    ServerBootstrap b = new ServerBootstrap();
-	    getConfiguration();
 	    b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
 		    .handler(new LoggingHandler(Config.getLogLevel()))
 		    .childHandler(new FactorialServerInitializer(sslCtx));
 
-	    getConfiguration();
 	    b.bind(Config.getPort()).sync().channel().closeFuture().sync();
 	} catch (InterruptedException e) {
 	    log.error(e.getMessage(), e);
@@ -60,11 +56,4 @@ public class Listener extends Job {
 	return result;
     }
 
-    public Config getConfiguration() {
-	return configuration;
-    }
-
-    public void setConfiguration(Config configuration) {
-	this.configuration = configuration;
-    }
 }

@@ -20,7 +20,7 @@ public class Application {
     @SuppressWarnings("resource")
     public static void main(String[] args) throws Exception {
 	if (Config.parseCLI(args, true)) {
-	    Listener lnr = new Listener("listener", Config.getInstance());
+	    Listener lnr = new Listener("listener");
 	    lnr.schedule();
 	    ApplicationContext ctx = new ClassPathXmlApplicationContext("application-config.xml");
 	    CustomerService customerService = ctx.getBean(CustomerService.class);
